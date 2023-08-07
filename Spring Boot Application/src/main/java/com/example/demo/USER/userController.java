@@ -15,15 +15,13 @@ public class userController {
     @PostMapping("/formData")
     public List Retreive(@RequestBody LoginForm loginForm){
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/user?allowPublicKeyRetrieval=true&useSSL=false", "root", "manoj@01");
+            Connection con = DriverManager.getConnection("jdbc:mysql://userdb.coslhabink4m.eu-north-1.rds.amazonaws.com:3306/userDB?allowPublicKeyRetrieval=true&useSSL=false", "root", "manojkannan");
             Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT NAME,EMAIL,PASSWORD FROM USERDETAILS");
-            System.out.println("done done done !!!");
+            ResultSet rs = stmt.executeQuery("SELECT NAME,EMAIL,PASSWORD FROM userdetails");
             while(rs.next()) {
                 String name = rs.getString("Name");
                 String email = rs.getString("Email");
                 String password = rs.getString("Password");
-                System.out.println(email+"\n"+password);
                 if(email.equals(loginForm.getEmail()) && password.equals(loginForm.getPassword())){
                     return List.of("You are allowed");
                 }
@@ -36,11 +34,10 @@ public class userController {
     @PostMapping("/addUser")
     public List addUser(@RequestBody LoginForm loginForm) {
         try {
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/user?allowPublicKeyRetrieval=true&useSSL=false", "root", "manoj@01");
+            Connection con = DriverManager.getConnection("jdbc:mysql://userdb.coslhabink4m.eu-north-1.rds.amazonaws.com:3306/userDB?allowPublicKeyRetrieval=true&useSSL=false", "root", "manojkannan");
             PreparedStatement stmt = con.prepareStatement("INSERT INTO userdetails" +
                     "  (name, email, password) VALUES " +
                     " (?, ?, ?);");
-            System.out.println(loginForm.getName());
             stmt.setString(1, loginForm.getName());
             stmt.setString(2, loginForm.getPassword());
             stmt.setString(3, loginForm.getPassword());
@@ -56,18 +53,15 @@ public class userController {
     @PostMapping("/locationData")
     public List<String> locationData(@RequestBody Location location) {
         try {
-            System.out.println(location.getLocation());
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/user?allowPublicKeyRetrieval=true&useSSL=false", "root", "manoj@01");
+            Connection con = DriverManager.getConnection("jdbc:mysql://userdb.coslhabink4m.eu-north-1.rds.amazonaws.com:3306/userDB?allowPublicKeyRetrieval=true&useSSL=false", "root", "manojkannan");
             String query = "SELECT Temperature, Humidity, Pressure, Windspeed FROM Locdetails WHERE Locname = '" + location.getLocation() + "'";
             Statement statement = con.createStatement();
             ResultSet rs = statement.executeQuery(query);
             if (rs.next()) {
-                System.out.println("hbb");
                 String temperature = rs.getString("Temperature");
                 String humidity = rs.getString("Humidity");
                 String pressure = rs.getString("Pressure");
                 String windspeed = rs.getString("Windspeed");
-
                 return List.of(temperature, humidity, pressure, windspeed);
             } else {
                 return List.of("Data Not Found");
@@ -78,3 +72,6 @@ public class userController {
         return List.of("Error Occurred");
     }
 }
+
+
+
